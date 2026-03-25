@@ -1,0 +1,473 @@
+{
+  "courses": [
+    {
+      "course": "raggc",
+      "greens": [
+        {
+          "green": "green_01",
+          "bin_file": "green_01.bin",
+          "layers": {
+            "slope": "green_01_slope.png",
+            "contour": "green_01_contour.png",
+            "aerial": "green_01_aerial.png"
+          },
+          "nx": 200,
+          "ny": 200,
+          "x_min": -38.0778923034668,
+          "x_max": 61.4221076965332,
+          "y_min": -32.371498107910156,
+          "y_max": 67.12850189208984,
+          "bin_size_kb": 511.7,
+          "png_size_kb": 11629.3
+        },
+        {
+          "green": "green_02",
+          "bin_file": "green_02.bin",
+          "layers": {
+            "slope": "green_02_slope.png",
+            "contour": "green_02_contour.png",
+            "aerial": "green_02_aerial.png"
+          },
+          "nx": 200,
+          "ny": 200,
+          "x_min": -34.91494369506836,
+          "x_max": 64.5850601196289,
+          "y_min": -32.43311309814453,
+          "y_max": 67.06688690185547,
+          "bin_size_kb": 511.7,
+          "png_size_kb": 10492.9
+        },
+        {
+          "green": "green_03",
+          "bin_file": "green_03.bin",
+          "layers": {
+            "slope": "green_03_slope.png",
+            "contour": "green_03_contour.png",
+            "aerial": "green_03_aerial.png"
+          },
+          "nx": 200,
+          "ny": 200,
+          "x_min": -39.399070739746094,
+          "x_max": 60.100929260253906,
+          "y_min": -29.630352020263672,
+          "y_max": 69.8696517944336,
+          "bin_size_kb": 511.7,
+          "png_size_kb": 12264.0
+        },
+        {
+          "green": "green_04",
+          "bin_file": "green_04.bin",
+          "layers": {
+            "slope": "green_04_slope.png",
+            "contour": "green_04_contour.png",
+            "aerial": "green_04_aerial.png"
+          },
+          "nx": 200,
+          "ny": 200,
+          "x_min": -35.94943618774414,
+          "x_max": 63.55056381225586,
+          "y_min": -33.577117919921875,
+          "y_max": 65.92288208007812,
+          "bin_size_kb": 511.7,
+          "png_size_kb": 13183.2
+        },
+        {
+          "green": "green_05",
+          "bin_file": "green_05.bin",
+          "layers": {
+            "slope": "green_05_slope.png",
+            "contour": "green_05_contour.png",
+            "aerial": "green_05_aerial.png"
+          },
+          "nx": 200,
+          "ny": 200,
+          "x_min": -38.52296829223633,
+          "x_max": 60.97703170776367,
+          "y_min": -35.18875503540039,
+          "y_max": 64.31124877929688,
+          "bin_size_kb": 511.7,
+          "png_size_kb": 17861.1
+        },
+        {
+          "green": "green_06",
+          "bin_file": "green_06.bin",
+          "layers": {
+            "slope": "green_06_slope.png",
+            "contour": "green_06_contour.png",
+            "aerial": "green_06_aerial.png"
+          },
+          "nx": 200,
+          "ny": 200,
+          "x_min": -42.12141036987305,
+          "x_max": 57.37858963012695,
+          "y_min": -26.833465576171875,
+          "y_max": 72.66653442382812,
+          "bin_size_kb": 511.7,
+          "png_size_kb": 15890.9
+        },
+        {
+          "green": "green_07",
+          "bin_file": "green_07.bin",
+          "layers": {
+            "slope": "green_07_slope.png",
+            "contour": "green_07_contour.png",
+            "aerial": "green_07_aerial.png"
+          },
+          "nx": 200,
+          "ny": 200,
+          "x_min": -32.58243942260742,
+          "x_max": 66.91756439208984,
+          "y_min": -36.17457580566406,
+          "y_max": 63.32542419433594,
+          "bin_size_kb": 511.7,
+          "png_size_kb": 16893.7
+        },
+        {
+          "green": "green_08",
+          "bin_file": "green_08.bin",
+          "layers": {
+            "slope": "green_08_slope.png",
+            "contour": "green_08_contour.png",
+            "aerial": "green_08_aerial.png"
+          },
+          "nx": 200,
+          "ny": 200,
+          "x_min": -40.651885986328125,
+          "x_max": 58.848114013671875,
+          "y_min": -32.41762161254883,
+          "y_max": 67.08238220214844,
+          "bin_size_kb": 511.7,
+          "png_size_kb": 15243.6
+        },
+        {
+          "green": "green_09",
+          "bin_file": "green_09.bin",
+          "layers": {
+            "slope": "green_09_slope.png",
+            "contour": "green_09_contour.png",
+            "aerial": "green_09_aerial.png"
+          },
+          "nx": 200,
+          "ny": 200,
+          "x_min": -39.36701965332031,
+          "x_max": 60.13298034667969,
+          "y_min": -32.61585235595703,
+          "y_max": 66.88414764404297,
+          "bin_size_kb": 511.7,
+          "png_size_kb": 14016.1
+        }
+      ]
+    },
+    {
+      "course": "te-arai-north",
+      "greens": [
+        {
+          "green": "green_01",
+          "bin_file": "green_01.bin",
+          "layers": {
+            "slope": "green_01_slope.png",
+            "contour": "green_01_contour.png",
+            "aerial": "green_01_aerial.png"
+          },
+          "nx": 200,
+          "ny": 200,
+          "x_min": -36.33207321166992,
+          "x_max": 63.16792678833008,
+          "y_min": -33.72991180419922,
+          "y_max": 65.77008819580078,
+          "bin_size_kb": 511.7,
+          "png_size_kb": 17983.4
+        },
+        {
+          "green": "green_02",
+          "bin_file": "green_02.bin",
+          "layers": {
+            "slope": "green_02_slope.png",
+            "contour": "green_02_contour.png",
+            "aerial": "green_02_aerial.png"
+          },
+          "nx": 200,
+          "ny": 200,
+          "x_min": -34.55983352661133,
+          "x_max": 64.94017028808594,
+          "y_min": -33.87047576904297,
+          "y_max": 65.62952423095703,
+          "bin_size_kb": 511.7,
+          "png_size_kb": 20251.2
+        },
+        {
+          "green": "green_03",
+          "bin_file": "green_03.bin",
+          "layers": {
+            "slope": "green_03_slope.png",
+            "contour": "green_03_contour.png",
+            "aerial": "green_03_aerial.png"
+          },
+          "nx": 200,
+          "ny": 200,
+          "x_min": -38.90997314453125,
+          "x_max": 60.59002685546875,
+          "y_min": -24.49001693725586,
+          "y_max": 75.00997924804688,
+          "bin_size_kb": 511.7,
+          "png_size_kb": 17328.1
+        },
+        {
+          "green": "green_04",
+          "bin_file": "green_04.bin",
+          "layers": {
+            "slope": "green_04_slope.png",
+            "contour": "green_04_contour.png",
+            "aerial": "green_04_aerial.png"
+          },
+          "nx": 200,
+          "ny": 200,
+          "x_min": -29.499893188476562,
+          "x_max": 70.00010681152344,
+          "y_min": -34.64223098754883,
+          "y_max": 64.85777282714844,
+          "bin_size_kb": 511.7,
+          "png_size_kb": 15296.1
+        },
+        {
+          "green": "green_05",
+          "bin_file": "green_05.bin",
+          "layers": {
+            "slope": "green_05_slope.png",
+            "contour": "green_05_contour.png",
+            "aerial": "green_05_aerial.png"
+          },
+          "nx": 200,
+          "ny": 200,
+          "x_min": -38.45619583129883,
+          "x_max": 61.04380416870117,
+          "y_min": -27.10966682434082,
+          "y_max": 72.39033508300781,
+          "bin_size_kb": 511.7,
+          "png_size_kb": 15663.8
+        },
+        {
+          "green": "green_06",
+          "bin_file": "green_06.bin",
+          "layers": {
+            "slope": "green_06_slope.png",
+            "contour": "green_06_contour.png",
+            "aerial": "green_06_aerial.png"
+          },
+          "nx": 200,
+          "ny": 200,
+          "x_min": -31.890928268432617,
+          "x_max": 67.60906982421875,
+          "y_min": -36.9376106262207,
+          "y_max": 62.5623893737793,
+          "bin_size_kb": 511.7,
+          "png_size_kb": 19830.9
+        },
+        {
+          "green": "green_07",
+          "bin_file": "green_07.bin",
+          "layers": {
+            "slope": "green_07_slope.png",
+            "contour": "green_07_contour.png",
+            "aerial": "green_07_aerial.png"
+          },
+          "nx": 200,
+          "ny": 200,
+          "x_min": -34.18086242675781,
+          "x_max": 65.31913757324219,
+          "y_min": -27.097501754760742,
+          "y_max": 72.40249633789062,
+          "bin_size_kb": 511.7,
+          "png_size_kb": 16854.5
+        },
+        {
+          "green": "green_08",
+          "bin_file": "green_08.bin",
+          "layers": {
+            "slope": "green_08_slope.png",
+            "contour": "green_08_contour.png",
+            "aerial": "green_08_aerial.png"
+          },
+          "nx": 200,
+          "ny": 200,
+          "x_min": -35.52951431274414,
+          "x_max": 63.97048568725586,
+          "y_min": -29.569175720214844,
+          "y_max": 69.93082427978516,
+          "bin_size_kb": 511.7,
+          "png_size_kb": 15949.5
+        },
+        {
+          "green": "green_09",
+          "bin_file": "green_09.bin",
+          "layers": {
+            "slope": "green_09_slope.png",
+            "contour": "green_09_contour.png",
+            "aerial": "green_09_aerial.png"
+          },
+          "nx": 200,
+          "ny": 200,
+          "x_min": -37.231632232666016,
+          "x_max": 62.268367767333984,
+          "y_min": -32.626773834228516,
+          "y_max": 66.87322998046875,
+          "bin_size_kb": 511.7,
+          "png_size_kb": 17824.9
+        },
+        {
+          "green": "green_10",
+          "bin_file": "green_10.bin",
+          "layers": {
+            "slope": "green_10_slope.png",
+            "contour": "green_10_contour.png",
+            "aerial": "green_10_aerial.png"
+          },
+          "nx": 200,
+          "ny": 200,
+          "x_min": -36.38819885253906,
+          "x_max": 63.11180114746094,
+          "y_min": -17.398468017578125,
+          "y_max": 82.10153198242188,
+          "bin_size_kb": 511.7,
+          "png_size_kb": 15673.4
+        },
+        {
+          "green": "green_11",
+          "bin_file": "green_11.bin",
+          "layers": {
+            "slope": "green_11_slope.png",
+            "contour": "green_11_contour.png",
+            "aerial": "green_11_aerial.png"
+          },
+          "nx": 200,
+          "ny": 200,
+          "x_min": -38.602291107177734,
+          "x_max": 60.897708892822266,
+          "y_min": -30.504261016845703,
+          "y_max": 68.99573516845703,
+          "bin_size_kb": 511.7,
+          "png_size_kb": 14137.3
+        },
+        {
+          "green": "green_12",
+          "bin_file": "green_12.bin",
+          "layers": {
+            "slope": "green_12_slope.png",
+            "contour": "green_12_contour.png",
+            "aerial": "green_12_aerial.png"
+          },
+          "nx": 200,
+          "ny": 200,
+          "x_min": -20.789697647094727,
+          "x_max": 78.7103042602539,
+          "y_min": -37.522987365722656,
+          "y_max": 61.977012634277344,
+          "bin_size_kb": 511.7,
+          "png_size_kb": 16476.0
+        },
+        {
+          "green": "green_13",
+          "bin_file": "green_13.bin",
+          "layers": {
+            "slope": "green_13_slope.png",
+            "contour": "green_13_contour.png",
+            "aerial": "green_13_aerial.png"
+          },
+          "nx": 200,
+          "ny": 200,
+          "x_min": -28.274991989135742,
+          "x_max": 71.22500610351562,
+          "y_min": -23.218095779418945,
+          "y_max": 76.28190612792969,
+          "bin_size_kb": 511.7,
+          "png_size_kb": 19991.7
+        },
+        {
+          "green": "green_14",
+          "bin_file": "green_14.bin",
+          "layers": {
+            "slope": "green_14_slope.png",
+            "contour": "green_14_contour.png",
+            "aerial": "green_14_aerial.png"
+          },
+          "nx": 200,
+          "ny": 200,
+          "x_min": -39.19800567626953,
+          "x_max": 60.30199432373047,
+          "y_min": -29.341920852661133,
+          "y_max": 70.1580810546875,
+          "bin_size_kb": 511.7,
+          "png_size_kb": 21154.6
+        },
+        {
+          "green": "green_15",
+          "bin_file": "green_15.bin",
+          "layers": {
+            "slope": "green_15_slope.png",
+            "contour": "green_15_contour.png",
+            "aerial": "green_15_aerial.png"
+          },
+          "nx": 200,
+          "ny": 200,
+          "x_min": -29.910982131958008,
+          "x_max": 69.58901977539062,
+          "y_min": -37.45402908325195,
+          "y_max": 62.04597091674805,
+          "bin_size_kb": 511.7,
+          "png_size_kb": 14687.4
+        },
+        {
+          "green": "green_16",
+          "bin_file": "green_16.bin",
+          "layers": {
+            "slope": "green_16_slope.png",
+            "contour": "green_16_contour.png",
+            "aerial": "green_16_aerial.png"
+          },
+          "nx": 200,
+          "ny": 200,
+          "x_min": -40.447059631347656,
+          "x_max": 59.052940368652344,
+          "y_min": -31.910736083984375,
+          "y_max": 67.58926391601562,
+          "bin_size_kb": 511.7,
+          "png_size_kb": 20783.4
+        },
+        {
+          "green": "green_17",
+          "bin_file": "green_17.bin",
+          "layers": {
+            "slope": "green_17_slope.png",
+            "contour": "green_17_contour.png",
+            "aerial": "green_17_aerial.png"
+          },
+          "nx": 200,
+          "ny": 200,
+          "x_min": -37.538509368896484,
+          "x_max": 61.961490631103516,
+          "y_min": -30.24382972717285,
+          "y_max": 69.25617218017578,
+          "bin_size_kb": 511.7,
+          "png_size_kb": 20607.7
+        },
+        {
+          "green": "green_18",
+          "bin_file": "green_18.bin",
+          "layers": {
+            "slope": "green_18_slope.png",
+            "contour": "green_18_contour.png",
+            "aerial": "green_18_aerial.png"
+          },
+          "nx": 200,
+          "ny": 200,
+          "x_min": -16.306116104125977,
+          "x_max": 83.19388580322266,
+          "y_min": -24.498437881469727,
+          "y_max": 75.0015640258789,
+          "bin_size_kb": 511.7,
+          "png_size_kb": 20755.7
+        }
+      ]
+    }
+  ]
+}
