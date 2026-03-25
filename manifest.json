@@ -1,0 +1,11 @@
+{
+    "name": "Putt Solver",
+    "short_name": "Putt Solver",
+    "description": "Golf green putt solver — find the aim point and speed for any putt",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#1a1a2e",
+    "theme_color": "#1a1a2e",
+    "orientation": "portrait",
+    "icons": []
+}

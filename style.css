@@ -1,0 +1,195 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #1a1a2e;
+    color: #e0e0e0;
+    overflow: hidden;
+    height: 100vh;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ── Top bar ─────────────────────────────────────────────────────────── */
+
+.top-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: #16213e;
+    border-bottom: 1px solid #0f3460;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+}
+
+.top-bar select, .top-bar input {
+    background: #0f3460;
+    color: #e0e0e0;
+    border: 1px solid #1a5276;
+    border-radius: 6px;
+    padding: 6px 8px;
+    font-size: 14px;
+    outline: none;
+}
+
+.top-bar select {
+    flex: 1;
+    min-width: 0;
+    max-width: 160px;
+}
+
+.top-bar label {
+    font-size: 12px;
+    color: #aaa;
+    white-space: nowrap;
+}
+
+.stimp-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.stimp-group select {
+    width: 60px;
+}
+
+/* ── Canvas area ─────────────────────────────────────────────────────── */
+
+.canvas-wrapper {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    touch-action: none;
+}
+
+canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+}
+
+/* ── Bottom controls ─────────────────────────────────────────────────── */
+
+.bottom-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: #16213e;
+    border-top: 1px solid #0f3460;
+    flex-shrink: 0;
+    gap: 8px;
+}
+
+.btn {
+    background: #0f3460;
+    color: #e0e0e0;
+    border: 1px solid #1a5276;
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-size: 14px;
+    cursor: pointer;
+    white-space: nowrap;
+    min-height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn:active {
+    background: #1a5276;
+}
+
+.btn.primary {
+    background: #e94560;
+    border-color: #e94560;
+}
+
+.btn.primary:active {
+    background: #c73e54;
+}
+
+.btn:disabled {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.solution-nav {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.solution-nav .label {
+    font-size: 13px;
+    min-width: 50px;
+    text-align: center;
+}
+
+/* ── Status / info overlay ───────────────────────────────────────────── */
+
+.status-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 8px 12px;
+    font-size: 13px;
+    text-align: center;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.status-bar.instruction {
+    background: rgba(22, 33, 62, 0.85);
+    color: #64b5f6;
+}
+
+.status-bar.result {
+    background: rgba(22, 33, 62, 0.90);
+    color: #e0e0e0;
+}
+
+.status-bar.solving {
+    background: rgba(233, 69, 96, 0.85);
+    color: #fff;
+}
+
+.status-bar.error {
+    background: rgba(200, 50, 50, 0.85);
+    color: #fff;
+}
+
+/* ── Offline indicator ───────────────────────────────────────────────── */
+
+.offline-status {
+    font-size: 11px;
+    color: #aaa;
+    text-align: center;
+    padding: 4px 8px;
+    background: #16213e;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.offline-status .btn {
+    background: #0f3460;
+    border-color: #1a5276;
+}
+
+.offline-status .btn:disabled {
+    opacity: 0.4;
+}
