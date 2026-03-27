@@ -269,6 +269,8 @@ function solvePutt(ballXY, holeXY, mu, dem) {
 
     // Phase 2 & 3: refine each candidate
     const solutions = [];
+    let bestAttempt = null; // tracks closest miss across all candidates
+
     for (const cand of candidates) {
         // Fine
         const fine = gridSearch(
@@ -292,12 +294,27 @@ function solvePutt(ballXY, holeXY, mu, dem) {
         );
         const bestEF = bestFromSearch(ef.dists, ef.spAtMin, ef.N);
 
+        if (bestAttempt === null || ef.dists[bestEF] < bestAttempt.dist) {
+            bestAttempt = { dist: ef.dists[bestEF], aim: ef.aims[bestEF], speed: ef.speeds[bestEF] };
+        }
+
         if (ef.dists[bestEF] <= HOLE_RADIUS) {
             solutions.push(buildSolution(
                 bx, by, hx, hy, dist, straightAngle,
                 ef.aims[bestEF], ef.speeds[bestEF], mu
             ));
         }
+    }
+
+    // If nothing sank, return the closest attempt so the UI can show it
+    if (solutions.length === 0 && bestAttempt !== null) {
+        const sol = buildSolution(
+            bx, by, hx, hy, dist, straightAngle,
+            bestAttempt.aim, bestAttempt.speed, mu
+        );
+        sol.isBestAttempt = true;
+        sol.missDistance = bestAttempt.dist;
+        solutions.push(sol);
     }
 
     // Sort by launch speed (slowest first)

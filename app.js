@@ -106,7 +106,12 @@
         const sol = solutions[solIndex];
         const n = solutions.length;
         const tag = n > 1 ? ` [${solIndex + 1}/${n}]` : '';
-        setStatus(`Aim: ${sol.offsetLabel}  |  Speed: ${sol.speedLabel}${tag}`, 'result');
+        if (sol.isBestAttempt) {
+            const missM = sol.missDistance.toFixed(2);
+            setStatus(`No solution — closest: ${missM}m miss  |  Aim: ${sol.offsetLabel}  |  Speed: ${sol.speedLabel}${tag}`, 'warning');
+        } else {
+            setStatus(`Aim: ${sol.offsetLabel}  |  Speed: ${sol.speedLabel}${tag}`, 'result');
+        }
     }
 
     // ── Solution label ──────────────────────────────────────────────────
@@ -242,7 +247,7 @@
         // Draw solved putt (current solution)
         if (state === 'SOLVED' && solutions.length > 0) {
             const sol = solutions[solIndex];
-            const colour = PUTT_COLOURS[0];
+            const colour = sol.isBestAttempt ? '#FF8800' : PUTT_COLOURS[solIndex % PUTT_COLOURS.length];
 
             // Putt path (curved)
             if (sol.pathX && sol.pathX.length > 1) {

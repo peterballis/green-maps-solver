@@ -170,6 +170,11 @@ canvas {
     color: #fff;
 }
 
+.status-bar.warning {
+    background: rgba(180, 100, 0, 0.90);
+    color: #ffe0a0;
+}
+
 /* ── Offline indicator ───────────────────────────────────────────────── */
 
 .offline-status {
