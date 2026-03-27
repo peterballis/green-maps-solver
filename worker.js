@@ -34,8 +34,10 @@ self.onmessage = async function(e) {
         const elapsed = ((performance.now() - t0) / 1000).toFixed(2);
 
         const results = solutions.map(sol => {
+            // Lag putt: pass null holeXY so ball rolls to natural stop
+            const pathHole = sol.isLagPutt ? null : data.holeXY;
             const { pathX, pathY } = api.simulatePath(
-                data.ballXY, sol.aimAngle, sol.launchSpeed, mu, dem, data.holeXY
+                data.ballXY, sol.aimAngle, sol.launchSpeed, mu, dem, pathHole
             );
             return { ...sol, pathX, pathY };
         });

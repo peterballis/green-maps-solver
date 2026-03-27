@@ -113,6 +113,131 @@ function simulateOne(bx, by, aim, v0, mu, dem, hx, hy) {
     return { minDist: Math.sqrt(minDistSq), speedAtMin };
 }
 
+// ── Endpoint simulation (for lag putt) ───────────────────────────────────
+// Like simulateOne but lets the ball roll to a natural stop (no hole bail-out).
+// Returns squared distance from final resting position to hole.
+
+function simulateEndpoint(bx, by, aim, v0, mu, dem, hx, hy) {
+    const { sdx, sdy, gx, gy, nx, ny } = dem;
+    const x0g = gx[0], y0g = gy[0];
+    const dxg = gx[1] - gx[0], dyg = gy[1] - gy[0];
+    const maxSteps = Math.floor(MAX_SIM_S / DT);
+
+    let x = bx, y = by;
+    let vx = v0 * Math.cos(aim);
+    let vy = v0 * Math.sin(aim);
+
+    const bhDistSq = (bx - hx) * (bx - hx) + (by - hy) * (by - hy);
+    const maxTravelSq = Math.max(25.0, 16.0 * bhDistSq);
+
+    for (let step = 0; step < maxSteps; step++) {
+        const sp = Math.sqrt(vx * vx + vy * vy);
+        if (sp < MIN_SPEED) break;
+
+        // Bail: too far from start
+        const fromStartSq = (x - bx) * (x - bx) + (y - by) * (y - by);
+        if (fromStartSq > maxTravelSq) break;
+
+        const fi = (x - x0g) / dxg;
+        const fj = (y - y0g) / dyg;
+        const i0 = Math.max(0, Math.min(Math.floor(fi), nx - 2));
+        const j0 = Math.max(0, Math.min(Math.floor(fj), ny - 2));
+        const fx = Math.max(0, Math.min(fi - i0, 1));
+        const fy = Math.max(0, Math.min(fj - j0, 1));
+
+        const w00 = (1 - fx) * (1 - fy);
+        const w10 = fx * (1 - fy);
+        const w01 = (1 - fx) * fy;
+        const w11 = fx * fy;
+
+        const idx00 = j0 * nx + i0;
+        const idx10 = j0 * nx + (i0 + 1);
+        const idx01 = (j0 + 1) * nx + i0;
+        const idx11 = (j0 + 1) * nx + (i0 + 1);
+
+        const slopeX = w00 * sdx[idx00] + w10 * sdx[idx10] +
+                       w01 * sdx[idx01] + w11 * sdx[idx11];
+        const slopeY = w00 * sdy[idx00] + w10 * sdy[idx10] +
+                       w01 * sdy[idx01] + w11 * sdy[idx11];
+
+        const spSafe = Math.max(sp, 1e-10);
+        const ux = vx / spSafe, uy = vy / spSafe;
+        vx += (-G * slopeX - mu * G * ux) * DT;
+        vy += (-G * slopeY - mu * G * uy) * DT;
+        x += vx * DT;
+        y += vy * DT;
+    }
+
+    const dx = x - hx, dy = y - hy;
+    return dx * dx + dy * dy;
+}
+
+// ── Lag putt search ───────────────────────────────────────────────────────
+// Finds the aim/speed whose endpoint (resting position) is closest to the hole.
+
+function lagPuttSearch(ballXY, holeXY, mu, dem) {
+    const [bx, by] = ballXY;
+    const [hx, hy] = holeXY;
+    const dist = Math.sqrt((hx - bx) * (hx - bx) + (hy - by) * (hy - by));
+    const straightAngle = Math.atan2(hy - by, hx - bx);
+    const v0Flat = Math.sqrt(2 * mu * G * (dist + ROLLOUT_M));
+
+    // Coarse pass
+    let bestEndDistSq = 1e10;
+    let bestAim = straightAngle;
+    let bestSpeed = v0Flat;
+
+    const angleLo = straightAngle - COARSE_ANGLE_RANGE;
+    const angleHi = straightAngle + COARSE_ANGLE_RANGE;
+    const speedLo = v0Flat * COARSE_SPEED_LO;
+    const speedHi = v0Flat * COARSE_SPEED_HI;
+
+    for (let ai = 0; ai < COARSE_N_ANGLES; ai++) {
+        const aim = angleLo + (angleHi - angleLo) * ai / (COARSE_N_ANGLES - 1);
+        for (let si = 0; si < COARSE_N_SPEEDS; si++) {
+            const v0 = speedLo + (speedHi - speedLo) * si / (COARSE_N_SPEEDS - 1);
+            const endDistSq = simulateEndpoint(bx, by, aim, v0, mu, dem, hx, hy);
+            if (endDistSq < bestEndDistSq) {
+                bestEndDistSq = endDistSq;
+                bestAim = aim;
+                bestSpeed = v0;
+            }
+        }
+    }
+
+    // Fine pass
+    for (let ai = 0; ai < FINE_N_ANGLES; ai++) {
+        const aim = (bestAim - 3 * Math.PI / 180) +
+                    (6 * Math.PI / 180) * ai / (FINE_N_ANGLES - 1);
+        for (let si = 0; si < FINE_N_SPEEDS; si++) {
+            const v0 = bestSpeed * 0.80 + bestSpeed * 0.40 * si / (FINE_N_SPEEDS - 1);
+            const endDistSq = simulateEndpoint(bx, by, aim, v0, mu, dem, hx, hy);
+            if (endDistSq < bestEndDistSq) {
+                bestEndDistSq = endDistSq;
+                bestAim = aim;
+                bestSpeed = v0;
+            }
+        }
+    }
+
+    // Extra-fine pass
+    for (let ai = 0; ai < 101; ai++) {
+        const aim = (bestAim - 0.5 * Math.PI / 180) +
+                    (1.0 * Math.PI / 180) * ai / 100;
+        for (let si = 0; si < 51; si++) {
+            const v0 = bestSpeed * 0.95 + bestSpeed * 0.10 * si / 50;
+            const endDistSq = simulateEndpoint(bx, by, aim, v0, mu, dem, hx, hy);
+            if (endDistSq < bestEndDistSq) {
+                bestEndDistSq = endDistSq;
+                bestAim = aim;
+                bestSpeed = v0;
+            }
+        }
+    }
+
+    return { aim: bestAim, speed: bestSpeed, endDist: Math.sqrt(bestEndDistSq) };
+}
+
 // ── Grid search ──────────────────────────────────────────────────────────
 // Runs nAngles × nSpeeds scalar simulations, returns arrays of results
 
@@ -269,7 +394,6 @@ function solvePutt(ballXY, holeXY, mu, dem) {
 
     // Phase 2 & 3: refine each candidate
     const solutions = [];
-    let bestAttempt = null; // tracks closest miss across all candidates
 
     for (const cand of candidates) {
         // Fine
@@ -294,10 +418,6 @@ function solvePutt(ballXY, holeXY, mu, dem) {
         );
         const bestEF = bestFromSearch(ef.dists, ef.spAtMin, ef.N);
 
-        if (bestAttempt === null || ef.dists[bestEF] < bestAttempt.dist) {
-            bestAttempt = { dist: ef.dists[bestEF], aim: ef.aims[bestEF], speed: ef.speeds[bestEF] };
-        }
-
         if (ef.dists[bestEF] <= HOLE_RADIUS) {
             solutions.push(buildSolution(
                 bx, by, hx, hy, dist, straightAngle,
@@ -306,14 +426,12 @@ function solvePutt(ballXY, holeXY, mu, dem) {
         }
     }
 
-    // If nothing sank, return the closest attempt so the UI can show it
-    if (solutions.length === 0 && bestAttempt !== null) {
-        const sol = buildSolution(
-            bx, by, hx, hy, dist, straightAngle,
-            bestAttempt.aim, bestAttempt.speed, mu
-        );
-        sol.isBestAttempt = true;
-        sol.missDistance = bestAttempt.dist;
+    // If nothing sank, run lag putt engine to find best resting position
+    if (solutions.length === 0) {
+        const lag = lagPuttSearch(ballXY, holeXY, mu, dem);
+        const sol = buildSolution(bx, by, hx, hy, dist, straightAngle, lag.aim, lag.speed, mu);
+        sol.isLagPutt = true;
+        sol.lagEndDist = lag.endDist;
         solutions.push(sol);
     }
 
