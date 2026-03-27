@@ -584,7 +584,7 @@
                     ballXY: ballXY,
                     aimAngle: aimAngle,
                     v0: v0,
-                    holeXY: holeXY,
+                    holeXY: null,  // No hole — let ball roll to natural stop
                     stimp: stimpVal,
                     tag: 'manual',
                 },
