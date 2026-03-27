@@ -56,7 +56,7 @@ self.onmessage = async function(e) {
             data.ballXY, data.aimAngle, data.v0, mu, dem, data.holeXY || null
         );
 
-        self.postMessage({ command: 'pathResult', pathX, pathY });
+        self.postMessage({ command: 'pathResult', pathX, pathY, tag: data.tag });
         return;
     }
 };
