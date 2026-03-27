@@ -29,10 +29,26 @@
     let currentLayer = 'slope'; // persists across green/course changes
 
     let state = 'NO_GREEN';   // NO_GREEN | PLACE_HOLE | PLACE_BALL | SOLVING | SOLVED
+                              //           | MANUAL_PLACE_BALL | MANUAL_AIM
     let holeXY = null;        // [x, y] in green coordinates
     let ballXY = null;
     let solutions = [];       // solver results
     let solIndex = 0;
+
+    // ── Manual mode ──────────────────────────────────────────────────────
+    let appMode = 'solver';           // 'solver' | 'manual'
+    let manualPaths = [];             // accumulated trajectories
+    let pendingManualAim = null;      // { aimAngle, v0, aimPoint } while waiting for path
+
+    // Physics constants (mirrors solver.js — used for manual speed calc)
+    const G_APP = 9.81;
+    const V0_STIM_APP = 1.83;
+    const ROLLOUT_APP = 0.43;
+
+    function stimpToMuApp(stimpFeet) {
+        const stimpM = stimpFeet * 0.3048;
+        return (V0_STIM_APP * V0_STIM_APP) / (2 * G_APP * stimpM);
+    }
 
     // Display transform: green coords ↔ canvas pixels
     let transform = null;     // { scale, offsetX, offsetY, imgW, imgH }
@@ -93,6 +109,18 @@
             setStatus(e.data.message, 'error');
             state = 'PLACE_BALL';
         }
+
+        if (command === 'pathResult') {
+            if (e.data.tag === 'manual' && pendingManualAim && state === 'MANUAL_AIM') {
+                const { aimAngle, v0, aimPoint } = pendingManualAim;
+                pendingManualAim = null;
+                const stats = computeManualStats(aimAngle, v0, e.data.pathX, e.data.pathY);
+                const colour = PUTT_COLOURS[manualPaths.length % PUTT_COLOURS.length];
+                manualPaths.push({ pathX: e.data.pathX, pathY: e.data.pathY, aimPoint, colour, stats });
+                showManualStatus();
+                render();
+            }
+        }
     };
 
     // ── Status bar ───────────────────────────────────────────────────────
@@ -113,6 +141,76 @@
             setStatus(`Aim: ${sol.offsetLabel}  |  Speed: ${sol.speedLabel}${tag}`, 'result');
         }
     }
+
+    // ── Manual mode helpers ──────────────────────────────────────────────
+
+    function computeManualStats(aimAngle, v0, pathX, pathY) {
+        const mu = stimpToMuApp(parseFloat(stimpInput.value) || 10);
+        const flatRoll = (v0 * v0) / (2 * G_APP * mu);
+
+        const holeDist = holeXY
+            ? Math.sqrt((holeXY[0] - ballXY[0]) ** 2 + (holeXY[1] - ballXY[1]) ** 2)
+            : 0;
+        const speedDiff = flatRoll - holeDist;
+        const sign = speedDiff >= 0 ? '+' : '';
+        const speedLabel = `${flatRoll.toFixed(1)}m (${sign}${speedDiff.toFixed(1)}m)`;
+
+        const straightAngle = holeXY
+            ? Math.atan2(holeXY[1] - ballXY[1], holeXY[0] - ballXY[0])
+            : 0;
+        let angleDiff = ((aimAngle - straightAngle + Math.PI) % (2 * Math.PI)) - Math.PI;
+        if (angleDiff < -Math.PI) angleDiff += 2 * Math.PI;
+        const aimOffset = holeDist * Math.sin(angleDiff);
+        let offsetLabel;
+        if (Math.abs(aimOffset) < 0.05) {
+            offsetLabel = 'Straight';
+        } else {
+            const side = aimOffset > 0 ? 'left' : 'right';
+            offsetLabel = `${Math.abs(aimOffset).toFixed(2)}m ${side}`;
+        }
+
+        const endX = pathX[pathX.length - 1];
+        const endY = pathY[pathY.length - 1];
+        const missDist = holeXY
+            ? Math.sqrt((endX - holeXY[0]) ** 2 + (endY - holeXY[1]) ** 2)
+            : 0;
+
+        return { speedLabel, offsetLabel, missDist };
+    }
+
+    function showManualStatus() {
+        if (manualPaths.length === 0) {
+            setStatus('Manual — tap to set aim', 'instruction');
+            return;
+        }
+        const { stats } = manualPaths[manualPaths.length - 1];
+        const n = manualPaths.length;
+        const tag = n > 1 ? ` [path ${n}]` : '';
+        setStatus(`Aim: ${stats.offsetLabel}  |  Speed: ${stats.speedLabel}  |  Miss: ${stats.missDist.toFixed(2)}m${tag}`, 'result');
+    }
+
+    // ── Mode toggle ──────────────────────────────────────────────────────
+
+    const modeBtn = document.getElementById('modeBtn');
+
+    modeBtn.addEventListener('click', () => {
+        appMode = appMode === 'solver' ? 'manual' : 'solver';
+        modeBtn.textContent = appMode === 'manual' ? 'Solver' : 'Manual';
+        modeBtn.classList.toggle('active', appMode === 'manual');
+        holeXY = null;
+        ballXY = null;
+        solutions = [];
+        solIndex = 0;
+        manualPaths = [];
+        pendingManualAim = null;
+        if (state !== 'NO_GREEN') {
+            state = 'PLACE_HOLE';
+            const prefix = appMode === 'manual' ? 'Manual — ' : '';
+            setStatus(prefix + 'Tap to place the hole', 'instruction');
+        }
+        updateSolNav();
+        render();
+    });
 
     // ── Solution label ──────────────────────────────────────────────────
 
@@ -144,8 +242,11 @@
         ballXY = null;
         solutions = [];
         solIndex = 0;
+        manualPaths = [];
+        pendingManualAim = null;
         state = 'PLACE_HOLE';
-        setStatus('Tap to place the hole', 'instruction');
+        const prefix = appMode === 'manual' ? 'Manual — ' : '';
+        setStatus(prefix + 'Tap to place the hole', 'instruction');
         updateSolNav();
         render();
     });
@@ -304,6 +405,78 @@
             }
         }
 
+        // Draw manual mode trajectories
+        if ((state === 'MANUAL_AIM' || state === 'MANUAL_PLACE_BALL') && manualPaths.length > 0) {
+            for (const mp of manualPaths) {
+                const colour = mp.colour;
+
+                // Path line
+                if (mp.pathX && mp.pathX.length > 1) {
+                    ctx.beginPath();
+                    const [sx, sy] = greenToCanvas(mp.pathX[0], mp.pathY[0]);
+                    ctx.moveTo(sx, sy);
+                    for (let i = 1; i < mp.pathX.length; i++) {
+                        const [px, py] = greenToCanvas(mp.pathX[i], mp.pathY[i]);
+                        ctx.lineTo(px, py);
+                    }
+                    ctx.strokeStyle = colour;
+                    ctx.lineWidth = 2.5 * dpr;
+                    ctx.lineCap = 'round';
+                    ctx.stroke();
+                }
+
+                // Dashed aim line from ball to aim point
+                if (ballXY && mp.aimPoint) {
+                    const [bpx, bpy] = greenToCanvas(ballXY[0], ballXY[1]);
+                    const [apx, apy] = greenToCanvas(mp.aimPoint[0], mp.aimPoint[1]);
+                    ctx.beginPath();
+                    ctx.moveTo(bpx, bpy);
+                    ctx.lineTo(apx, apy);
+                    ctx.strokeStyle = colour;
+                    ctx.lineWidth = 1.5 * dpr;
+                    ctx.setLineDash([6 * dpr, 4 * dpr]);
+                    ctx.globalAlpha = 0.6;
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                    ctx.globalAlpha = 1.0;
+
+                    // Aim point marker (×)
+                    const sz = 5 * dpr;
+                    ctx.beginPath();
+                    ctx.moveTo(apx - sz, apy - sz); ctx.lineTo(apx + sz, apy + sz);
+                    ctx.moveTo(apx + sz, apy - sz); ctx.lineTo(apx - sz, apy + sz);
+                    ctx.strokeStyle = colour;
+                    ctx.lineWidth = 2 * dpr;
+                    ctx.stroke();
+                }
+
+                // Endpoint dot (where ball stopped)
+                if (mp.pathX && mp.pathX.length > 0) {
+                    const ex = mp.pathX[mp.pathX.length - 1];
+                    const ey = mp.pathY[mp.pathY.length - 1];
+                    const [epx, epy] = greenToCanvas(ex, ey);
+                    ctx.beginPath();
+                    ctx.arc(epx, epy, 4 * dpr, 0, Math.PI * 2);
+                    ctx.fillStyle = colour;
+                    ctx.fill();
+                }
+            }
+
+            // White dotted line from ball to hole (reference)
+            if (ballXY && holeXY) {
+                const [bpx, bpy] = greenToCanvas(ballXY[0], ballXY[1]);
+                const [hpx, hpy] = greenToCanvas(holeXY[0], holeXY[1]);
+                ctx.beginPath();
+                ctx.moveTo(bpx, bpy);
+                ctx.lineTo(hpx, hpy);
+                ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+                ctx.lineWidth = 1 * dpr;
+                ctx.setLineDash([3 * dpr, 3 * dpr]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+        }
+
         // Hole marker
         if (holeXY) {
             const [hpx, hpy] = greenToCanvas(holeXY[0], holeXY[1]);
@@ -374,10 +547,48 @@
             holeXY = [gx, gy];
             ballXY = null;
             solutions = [];
-            state = 'PLACE_BALL';
-            setStatus('Tap to place the ball', 'instruction');
+            manualPaths = [];
+            if (appMode === 'manual') {
+                state = 'MANUAL_PLACE_BALL';
+                setStatus('Manual — tap to place ball', 'instruction');
+            } else {
+                state = 'PLACE_BALL';
+                setStatus('Tap to place the ball', 'instruction');
+            }
             updateSolNav();
             render();
+            return;
+        }
+
+        if (state === 'MANUAL_PLACE_BALL') {
+            ballXY = [gx, gy];
+            manualPaths = [];
+            pendingManualAim = null;
+            state = 'MANUAL_AIM';
+            setStatus('Manual — tap to set aim', 'instruction');
+            render();
+            return;
+        }
+
+        if (state === 'MANUAL_AIM') {
+            const stimpVal = parseFloat(stimpInput.value) || 10;
+            const mu = stimpToMuApp(stimpVal);
+            const aimAngle = Math.atan2(gy - ballXY[1], gx - ballXY[0]);
+            const aimDist = Math.sqrt((gx - ballXY[0]) ** 2 + (gy - ballXY[1]) ** 2);
+            const v0 = Math.sqrt(2 * mu * G_APP * (aimDist + ROLLOUT_APP));
+            pendingManualAim = { aimAngle, v0, aimPoint: [gx, gy] };
+            worker.postMessage({
+                command: 'simulatePath',
+                data: {
+                    demKey: demKey,
+                    ballXY: ballXY,
+                    aimAngle: aimAngle,
+                    v0: v0,
+                    holeXY: holeXY,
+                    stimp: stimpVal,
+                    tag: 'manual',
+                },
+            });
             return;
         }
 

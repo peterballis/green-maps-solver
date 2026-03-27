@@ -124,6 +124,12 @@ canvas {
     pointer-events: none;
 }
 
+.btn.active {
+    background: #1a7a4a;
+    border-color: #1a7a4a;
+    color: #fff;
+}
+
 .solution-nav {
     display: flex;
     align-items: center;
