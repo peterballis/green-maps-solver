@@ -1,6 +1,6 @@
 // Service Worker — caches everything for full offline use.
 
-const CACHE_NAME = 'putt-solver-v10';
+const CACHE_NAME = 'putt-solver-v11';
 
 // App shell files — cached on install
 const APP_SHELL = [

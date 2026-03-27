@@ -502,6 +502,59 @@
             ctx.lineWidth = 1.5 * dpr;
             ctx.stroke();
         }
+
+        // North indicator (compass) — top-right corner
+        // rotation_alpha rotates world coords so play direction → (0,1).
+        // Geographic north (0,1) in world = (-sin(α), cos(α)) in rotated frame.
+        // Canvas y is inverted (y_max at top), so in canvas:
+        //   north_canvas = (-sin(α), -cos(α))  [canvas dx, canvas dy]
+        if (currentGreenMeta && currentGreenMeta.rotation_alpha != null && transform) {
+            const ra = currentGreenMeta.rotation_alpha;
+            const r = 22 * dpr;
+            const margin = 8 * dpr;
+            const cx = canvas.width - margin - r;
+            const cy = margin + r;
+
+            // Background circle
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(0,0,0,0.55)';
+            ctx.fill();
+
+            // North arrow direction in canvas space
+            const ndx = -Math.sin(ra);
+            const ndy = -Math.cos(ra);
+            const nAngle = Math.atan2(ndy, ndx);
+            const arrowLen = r * 0.72;
+
+            // Red (north) half of arrow
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(cx + Math.cos(nAngle) * arrowLen, cy + Math.sin(nAngle) * arrowLen);
+            ctx.strokeStyle = '#ff4444';
+            ctx.lineWidth = 2.5 * dpr;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+
+            // White (south) half
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(cx - Math.cos(nAngle) * arrowLen, cy - Math.sin(nAngle) * arrowLen);
+            ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+            ctx.lineWidth = 2 * dpr;
+            ctx.stroke();
+
+            // "N" label at the tip of the red arrow
+            const labelX = cx + Math.cos(nAngle) * (arrowLen + 5 * dpr);
+            const labelY = cy + Math.sin(nAngle) * (arrowLen + 5 * dpr);
+            ctx.font = `bold ${9 * dpr}px sans-serif`;
+            ctx.fillStyle = '#ff4444';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('N', labelX, labelY);
+            ctx.textAlign = 'start';
+            ctx.textBaseline = 'alphabetic';
+        }
     }
 
     // ── Canvas sizing ────────────────────────────────────────────────────
